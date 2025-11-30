@@ -14,8 +14,46 @@ st.set_page_config(
 # Webhook URL
 WEBHOOK_URL = "https://supermon.app.n8n.cloud/webhook/9fdecbd1-6485-46a9-a323-d5b6f0215015"
 
-# Title
-st.title("📮 Complaint Box")
+# Header with info button
+st.markdown("""
+<style>
+    .header-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+col1, col2 = st.columns([3, 1])
+with col1:
+    st.title("📮 Complaint Box")
+with col2:
+    # Add padding to align button with title
+    st.markdown("<div style='padding-top: 1.5rem;'>", unsafe_allow_html=True)
+    if st.button("How it works", use_container_width=True):
+        st.session_state.show_info = not st.session_state.get('show_info', False)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# Show explanation if button was clicked
+if st.session_state.get('show_info', False):
+    with st.expander("📖 How Complaint Box Works", expanded=True):
+        st.markdown("""
+        **How our Complaint Box operates:**
+        
+        1. **Submit Your Complaint**: Drop any complaint that you have about your device
+        2. **Attach Invoice**: Attach the invoice or other supporting documents
+        3. **AI Agent Processing**: Our AI agent will:
+           - Extract all the needful information from your complaint and documents
+           - Draft a professional complaint to the customer care email ID
+           - *(Future features)*: Make calls and tweet on your behalf
+        
+        **Beta Version:**
+        - In this beta version, we send an email to you with the customer care email ID and the drafted complaint
+        
+        Simply fill out the form below and let us handle the rest! 🚀
+        """)
+
 st.markdown("Please fill out the form below to submit your complaint.")
 
 # Create form
@@ -29,10 +67,10 @@ with st.form("complaint_form", clear_on_submit=True):
     
     # File uploader
     uploaded_files = st.file_uploader(
-        "Attach Files (Optional)",
+        "Attach invoices or other supporting documents (Optional)",
         type=None,  # Accept all file types
         accept_multiple_files=True,
-        help="You can attach multiple files to support your complaint"
+        help="This helps us investigate your complaint faster."
     )
     
     # Display uploaded files info
@@ -101,6 +139,6 @@ with st.form("complaint_form", clear_on_submit=True):
 # Footer
 st.markdown("---")
 st.markdown("### Need Help?")
-st.info("If you encounter any issues, please contact support.")
+st.info("If you encounter any issues, please contact infine8.consultancy@gmail.com")
 
 
