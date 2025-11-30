@@ -12,7 +12,7 @@ st.set_page_config(
 )
 
 # Webhook URL
-WEBHOOK_URL = "https://supermon.app.n8n.cloud/webhook/9fdecbd1-6485-46a9-a323-d5b6f0215015"
+WEBHOOK_URL = "https://tinyurl.com/mt2y4vfh"
 
 # Header with info button
 st.markdown("""
