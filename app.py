@@ -3,6 +3,11 @@ import requests
 from datetime import datetime
 import base64
 from io import BytesIO
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Configure page
 st.set_page_config(
@@ -11,8 +16,11 @@ st.set_page_config(
     layout="centered"
 )
 
-# Webhook URL
-WEBHOOK_URL = "https://tinyurl.com/mt2y4vfh"
+# Webhook URL from environment variable
+WEBHOOK_URL = os.getenv("WEBHOOK_URL")
+if not WEBHOOK_URL:
+    st.error("⚠️ WEBHOOK_URL environment variable is not set. Please check your .env file.")
+    st.stop()
 
 # Header with info button
 st.markdown("""
