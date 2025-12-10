@@ -147,6 +147,6 @@ with st.form("complaint_form", clear_on_submit=True):
 # Footer
 st.markdown("---")
 st.markdown("### Need Help?")
-st.info("If you encounter any issues, please contact infine8.consultancy@gmail.com")
+st.info("If you encounter any issues, please contact care@issuebot.in")
 
 
