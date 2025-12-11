@@ -86,23 +86,32 @@ if st.session_state.get('show_info', False):
 st.markdown("Please fill out the form below to submit your complaint.")
 
 # Ensure default values live in session state so they persist after errors
-for key, default in {
+default_form_state = {
     "name_input": "",
     "email_input": "",
     "subject_input": "",
     "complaint_input": "",
     "priority_input": "Low",
-}.items():
+}
+
+# Initialize defaults once
+for key, default in default_form_state.items():
     st.session_state.setdefault(key, default)
+st.session_state.setdefault("uploader_key", 0)
+st.session_state.setdefault("success_note", "")
+st.session_state.setdefault("reset_form", False)
 
+# Apply pending reset BEFORE widgets instantiate
+if st.session_state.get("reset_form"):
+    for key, default in default_form_state.items():
+        st.session_state[key] = default
+    st.session_state.uploader_key += 1  # force uploader to reset
+    st.session_state.reset_form = False
 
-def clear_form_state():
-    st.session_state.name_input = ""
-    st.session_state.email_input = ""
-    st.session_state.subject_input = ""
-    st.session_state.complaint_input = ""
-    st.session_state.priority_input = "Low"
-    st.session_state.uploaded_files = None
+# Show pending success note (from last submit)
+if st.session_state.get("success_note"):
+    st.success(st.session_state["success_note"])
+    st.session_state["success_note"] = ""
 
 
 # Create form
@@ -120,7 +129,7 @@ with st.form("complaint_form", clear_on_submit=False):
         type=None,  # Accept all file types
         accept_multiple_files=True,
         help="Required: at least one supporting document so we can process your complaint.",
-        key="uploaded_files",
+        key=f"uploaded_files_{st.session_state.uploader_key}",
     )
     
     # Display uploaded files info
@@ -189,7 +198,10 @@ with st.form("complaint_form", clear_on_submit=False):
                     if response.status_code == 200:
                         st.success("✅ Your complaint has been submitted successfully!")
                         st.balloons()
-                        clear_form_state()  # Reset form after success
+                        # Defer clearing inputs to next rerun to avoid widget mutation errors
+                        st.session_state.success_note = "✅ Your complaint has been submitted successfully!"
+                        st.session_state.reset_form = True
+                        st.rerun()
                     else:
                         st.warning(f"⚠️ Submission received with status code: {response.status_code}")
                         st.info(f"Response: {response.text}")
